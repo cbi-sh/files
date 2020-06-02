@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	if err := os.MkdirAll("/id", 0700); err != nil {
+	if err := os.MkdirAll("id", 0700); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -85,7 +85,7 @@ func Set(path, file, value string) error {
 
 func toAbsolute(path, file string) string {
 	return string([]byte{
-		'/',
+		// '/',
 		'i', 'd', '/',
 		path[0], '/',
 		path[1], '/',

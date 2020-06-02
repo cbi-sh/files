@@ -46,7 +46,7 @@ func BenchmarkWrite(b *testing.B) {
 	from := 380670000000
 
 	for id := int64(from); id < int64(100000+from); id++ {
-		if err := Set(strconv.FormatInt(id, 10), "lang", strconv.FormatInt(rand.Int63n(3), 10)); err != nil {
+		if err := Set(strconv.FormatInt(id, 10), "billing", strconv.FormatInt(rand.Int63n(3), 10)); err != nil {
 			log.Println(err)
 		}
 	}
