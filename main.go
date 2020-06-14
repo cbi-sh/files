@@ -62,18 +62,12 @@ func putFile(w http.ResponseWriter, r *http.Request) {
 // ================================================================================================
 
 func Get(path, file string) ([]byte, error) {
-	if value, err := ioutil.ReadFile(toAbsolute(path, file)); err != nil {
-		return nil, err
-	} else {
-		return value, nil
-	}
+	return ioutil.ReadFile(toAbsolute(path, file))
 }
 
 func Set(path, file, value string) error {
 	if err := ioutil.WriteFile(toAbsolute(path, file), []byte(value), 0600); err != nil {
 		if err := os.MkdirAll(toAbsolute(path, ""), 0700); err != nil {
-
-			log.Println(err)
 			return err
 		}
 		return ioutil.WriteFile(toAbsolute(path, file), []byte(value), 0600)

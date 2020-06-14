@@ -29,11 +29,9 @@ func TestSetGet(t *testing.T) {
 // BenchmarkReadOpen-8		300_000_000		3.58 ns/op
 // BenchmarkWriteOpen-8  	    500_000   2919 ns/op
 func BenchmarkRead(b *testing.B) {
-	b.ResetTimer()
-
 	from := 380670000000
-
-	for id := int64(from); id < int64(b.N+from); id++ {
+	b.ResetTimer()
+	for id := int64(from); id < int64(1000+from); id++ {
 		if _, err := Get(strconv.FormatInt(id, 10), "billing"); err != nil {
 			log.Println(err)
 		}
@@ -41,11 +39,9 @@ func BenchmarkRead(b *testing.B) {
 }
 
 func BenchmarkWrite(b *testing.B) {
-	b.ResetTimer()
-
 	from := 380670000000
-
-	for id := int64(from); id < int64(100000+from); id++ {
+	b.ResetTimer()
+	for id := int64(from); id < int64(1000+from); id++ {
 		if err := Set(strconv.FormatInt(id, 10), "billing", strconv.FormatInt(rand.Int63n(3), 10)); err != nil {
 			log.Println(err)
 		}
@@ -58,10 +54,9 @@ func BenchmarkReadOpen(b *testing.B) {
 		log.Fatal(err)
 	} else {
 
-		b.ResetTimer()
-
 		var value []uint8
 
+		b.ResetTimer()
 		for id := 0; id < b.N; id++ {
 			if n, err := f.ReadAt(value, 0); err != nil {
 				log.Fatal(err)
@@ -69,6 +64,7 @@ func BenchmarkReadOpen(b *testing.B) {
 				log.Fatal(io.ErrShortWrite)
 			}
 		}
+		b.StopTimer()
 
 		if err := f.Close(); err != nil {
 			log.Fatal(err)
@@ -78,15 +74,14 @@ func BenchmarkReadOpen(b *testing.B) {
 
 func BenchmarkWriteOpen(b *testing.B) {
 
-	f, err := os.OpenFile("id", os.O_WRONLY|os.O_CREATE, 0600)
+	f, err := os.OpenFile("id_", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	b.ResetTimer()
-
 	value := []byte("a")
 
+	b.ResetTimer()
 	for id := 0; id < b.N; id++ {
 		if n, err := f.WriteAt(value, 0); err != nil {
 			log.Fatal(err)
@@ -94,8 +89,13 @@ func BenchmarkWriteOpen(b *testing.B) {
 			log.Fatal(io.ErrShortWrite)
 		}
 	}
+	b.StopTimer()
 
 	if err := f.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	if os.Remove("id_") != nil {
 		log.Fatal(err)
 	}
 }
